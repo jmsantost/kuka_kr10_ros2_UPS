@@ -1,0 +1,38 @@
+DEF ros_stream()
+  ; Cola de puntos con aproximacion para kuka_bridge (protocol:=stream).
+  ;
+  ; El PC escribe el punto de secuencia s en COM_BUF[(s-1) - ((s-1)/16)*16 + 1]
+  ; y despues COM_WR = s. Este programa lee los puntos en orden y suma
+  ; COM_RD al planificarlos. COM_LAST = secuencia del ultimo punto de la
+  ; trayectoria: ese va sin C_PTP para parar exacto en destino.
+  ;
+  ; No usar WAIT FOR aqui dentro: para el advance run y se pierde la
+  ; aproximacion. Las variables globales de usuario no lo paran.
+  DECL INT idx
+
+  BAS(#INITMOV, 0)
+  BAS(#VEL_PTP, 10)
+  BAS(#ACC_PTP, 20)
+  $APO.CPTP = 50
+  $ADVANCE = 3
+
+  ; Descartar puntos pendientes de una ejecucion anterior y avisar al PC
+  ; de que el programa se ha (re)iniciado
+  COM_RD = COM_WR
+  COM_GEN = COM_GEN + 1
+
+  PTP $AXIS_ACT
+
+  LOOP
+    IF COM_RD < COM_WR THEN
+      ; KRL no tiene MOD: division entera de INT
+      idx = COM_RD - (COM_RD / 16) * 16 + 1
+      IF COM_RD + 1 == COM_LAST THEN
+        PTP COM_BUF[idx]
+      ELSE
+        PTP COM_BUF[idx] C_PTP
+      ENDIF
+      COM_RD = COM_RD + 1
+    ENDIF
+  ENDLOOP
+END

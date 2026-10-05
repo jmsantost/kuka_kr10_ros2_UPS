@@ -1,0 +1,57 @@
+# Escena de colision para MoveIt. Todo en el frame base_link (ROBROOT):
+#   origen = centro de la base (eje A1) a la altura de la superficie de apoyo
+#   del robot, que esta sobre un pedestal de 0.40 m: el suelo esta en z = -0.40
+#   +X = hacia donde apunta el brazo con A1=0, +Y = a la izquierda, +Z = arriba
+# Unidades: metros y grados. Cada objeto es una caja:
+#   size = [largo X, ancho Y, alto Z], position = centro de la caja, yaw = giro en Z
+#   color = [r, g, b, alpha] entre 0 y 1 (opcional; alpha bajo = translucido)
+scene_publisher:
+  ros__parameters:
+    frame: base_link
+    objects: [suelo, pedestal, pared_atras, pared_delante, pared_izquierda, pared_derecha, mesa]
+
+    # Suelo real, 0.40 m por debajo de la base del robot (pedestal)
+    suelo.size: [3.0, 3.0, 0.02]
+    suelo.position: [0.0, 0.0, -0.41]
+    suelo.yaw: 0.0
+    suelo.color: [0.5, 0.5, 0.5, 0.15]
+
+    # Pedestal 36 x 36 x 40 cm centrado bajo el robot. Cara superior 5 mm por
+    # debajo de la base (z = -0.005) para que no cuente como colision con
+    # base_link: va de z = -0.40 a z = -0.005 -> alto 0.395, centro -0.2025
+    pedestal.size: [0.36, 0.36, 0.395]
+    pedestal.position: [0.0, 0.0, -0.2025]
+    pedestal.yaw: 0.0
+    pedestal.color: [0.35, 0.35, 0.35, 1.0]
+
+    # Espacio de trabajo: 0.90 m hacia atras, 1.10 m delante y a los lados.
+    # Paredes de 2 cm de grosor, desde el suelo (z=-0.40) hasta z=2.0, con la
+    # cara interior en el limite.
+    pared_atras.size: [0.02, 2.24, 2.4]
+    pared_atras.position: [-0.91, 0.0, 0.8]
+    pared_atras.yaw: 0.0
+    pared_atras.color: [0.2, 0.5, 1.0, 0.15]
+
+    pared_delante.size: [0.02, 2.24, 2.4]
+    pared_delante.position: [1.11, 0.0, 0.8]
+    pared_delante.yaw: 0.0
+    pared_delante.color: [0.2, 0.5, 1.0, 0.15]
+
+    pared_izquierda.size: [2.04, 0.02, 2.4]
+    pared_izquierda.position: [0.10, 1.11, 0.8]
+    pared_izquierda.yaw: 0.0
+    pared_izquierda.color: [0.2, 0.5, 1.0, 0.15]
+
+    pared_derecha.size: [2.04, 0.02, 2.4]
+    pared_derecha.position: [0.10, -1.11, 0.8]
+    pared_derecha.yaw: 0.0
+    pared_derecha.color: [0.2, 0.5, 1.0, 0.15]
+
+    # Mesa 46 (X) x 80.5 (Y) x 62 (alto desde el suelo) cm, modelada como bloque
+    # macizo desde el suelo. Delante del robot y centrada en Y; borde cercano a
+    # 0.50 m del eje A1 -> centro x = 0.50 + 0.46/2 = 0.73.
+    # Suelo en z=-0.40 -> tablero en z = 0.22, centro z = -0.40 + 0.31 = -0.09
+    mesa.size: [0.46, 0.805, 0.62]
+    mesa.position: [0.73, 0.0, -0.09]
+    mesa.yaw: 0.0
+    mesa.color: [0.55, 0.35, 0.15, 1.0]

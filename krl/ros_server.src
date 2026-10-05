@@ -1,0 +1,17 @@
+DEF ros_server()
+  ; Un PTP por punto para kuka_bridge (protocol:=single).
+  ; El PC escribe COM_E6AXIS y COM_ACTION=1; al llegar, COM_ACTION vuelve a 0.
+  ; WAIT SEC 0 para el advance run: COM_ACTION=0 solo tras terminar el PTP.
+  BAS(#INITMOV, 0)
+  BAS(#VEL_PTP, 10)
+  BAS(#ACC_PTP, 20)
+  COM_ACTION = 0
+  PTP $AXIS_ACT
+
+  LOOP
+    WAIT FOR COM_ACTION == 1
+    PTP COM_E6AXIS
+    WAIT SEC 0
+    COM_ACTION = 0
+  ENDLOOP
+END

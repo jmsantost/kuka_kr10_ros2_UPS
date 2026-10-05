@@ -1,0 +1,13 @@
+; KRC:\R1\System\$config.dat, seccion USER GLOBALS (Userdefined Variables).
+; Teclado aleman del controlador: [ = AltGr+8, ] = AltGr+9.
+
+; ros_server.src (protocol:=single)
+DECL E6AXIS COM_E6AXIS
+DECL INT COM_ACTION=0
+
+; ros_stream.src (protocol:=stream)
+DECL E6AXIS COM_BUF[16]
+DECL INT COM_WR=0
+DECL INT COM_RD=0
+DECL INT COM_LAST=0
+DECL INT COM_GEN=0

@@ -1,0 +1,11 @@
+# Posicion home del KR10 R1100-2 en RADIANES (joint_i = Ai del KUKA).
+# A1 0, A2 -90, A3 90, A4 0, A5 0, A6 0 (grados)
+joint_state_publisher:
+  ros__parameters:
+    zeros:
+      joint_1: 0.0
+      joint_2: -1.570796   # -90 deg
+      joint_3: 1.570796    #  90 deg
+      joint_4: 0.0
+      joint_5: 0.0
+      joint_6: 0.0
