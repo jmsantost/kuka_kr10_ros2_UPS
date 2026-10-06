@@ -1,5 +1,7 @@
 # kuka_kr10_ros2_UPS
 
+[![CI](https://github.com/jmsantost/kuka_kr10_ros2_UPS/actions/workflows/ci.yml/badge.svg)](https://github.com/jmsantost/kuka_kr10_ros2_UPS/actions/workflows/ci.yml)
+
 Control de un **KUKA KR10 R1100-2 (KR AGILUS)** con **ROS 2 Jazzy y MoveIt 2**
 desde un controlador **KR C4 sin licencias RSI ni EKI**, usando
 [KUKAVARPROXY](https://github.com/ImtsSrl/KUKAVARPROXY) para leer y escribir
@@ -50,6 +52,8 @@ La historia completa del desarrollo, las decisiones y los problemas encontrados 
 | `config/home.yaml` | Posición home para el visor de URDF |
 | `launch/` | `moveit.launch.py`, `bridge.launch.py`, `view_robot.launch.py` |
 | `tools/kvp_sim.py` | Simulador de KUKAVARPROXY + KRL para probar sin robot |
+| `test/` | Tests automáticos (pytest) contra el simulador |
+| `.github/workflows/ci.yml` | CI: compila y ejecuta los tests en cada push |
 
 El paquete ROS se llama `kuka_bridge`.
 
@@ -290,6 +294,24 @@ PROG=ROS_STREAM python3 ~/kuka_ws/src/kuka_kr10_ros2_UPS/tools/kvp_sim.py &
 ros2 launch kuka_bridge moveit.launch.py robot_ip:=127.0.0.1 robot_port:=17000 \
     allow_motion:=true protocol:=stream
 ```
+
+### Tests automáticos
+
+```bash
+cd ~/kuka_ws/src/kuka_kr10_ros2_UPS
+source /opt/ros/jazzy/setup.bash
+python3 -m pytest -v
+```
+
+- `test_trajectory.py`: simplificación de trayectorias (rectas, esquinas, zigzag, arcos).
+- `test_kvp_client.py`: protocolo KUKAVARPROXY, reconexión, parseo de `E6AXIS`.
+- `test_bridge.py`: el nodo completo contra el simulador. Ejecución con los dos protocolos,
+  aproximación `C_PTP`, límites, saltos, modo AUT, programa equivocado, cancelación.
+  En los casos rechazados comprueba además que **no se escribió nada** en la cola.
+
+Los tests conectan siempre a `127.0.0.1` y fuerzan un `ROS_DOMAIN_ID` aleatorio con
+descubrimiento solo local: no pueden llegar al robot real. GitHub Actions los ejecuta en
+cada push.
 
 ---
 

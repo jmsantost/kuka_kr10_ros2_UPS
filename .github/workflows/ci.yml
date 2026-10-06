@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    container: ros:jazzy-ros-base
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ws/src/kuka_bridge
+
+      - name: Dependencias
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            python3-pytest python3-colcon-common-extensions ros-jazzy-control-msgs
+
+      - name: Compilar
+        shell: bash
+        working-directory: ws
+        run: |
+          source /opt/ros/jazzy/setup.bash
+          colcon build --packages-select kuka_bridge
+
+      - name: Tests (simulador local, sin robot)
+        shell: bash
+        working-directory: ws/src/kuka_bridge
+        run: |
+          source /opt/ros/jazzy/setup.bash
+          python3 -m pytest test -v
