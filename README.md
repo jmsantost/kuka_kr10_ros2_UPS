@@ -43,6 +43,7 @@ La historia completa del desarrollo, las decisiones y los problemas encontrados 
 | `kuka_bridge/kvp_client.py` | Cliente KUKAVARPROXY propio (timeouts, reconexión, lectura completa de mensajes) |
 | `kuka_bridge/scene_publisher.py` | Carga `config/scene.yaml` en MoveIt |
 | `kuka_bridge/read_vars.py` | `kuka_vars`: lee variables KRL (solo lectura) |
+| `kuka_bridge/go_home.py` | `go_home`: lleva el robot a `home` (u otro estado del SRDF) con MoveIt |
 | `krl/` | Programas KRL y declaraciones para `$config.dat` |
 | `config/scene.yaml` | Escena de colisión |
 | `config/moveit_controllers.yaml` | Conexión MoveIt → bridge |
@@ -156,6 +157,17 @@ En RViz, panel **MotionPlanning**:
 3. **Plan** → revisar la animación → **Execute**.
 
 En T1 hay que mantener el pulsador de habilitación y Start durante el movimiento.
+
+### Ir a home
+Con `moveit.launch.py` en marcha, en otra terminal:
+```bash
+ros2 run kuka_bridge go_home              # planifica, muestra el cambio por eje y pide confirmación
+ros2 run kuka_bridge go_home -y           # sin confirmación
+ros2 run kuka_bridge go_home --plan-only  # solo planificar, no mueve
+ros2 run kuka_bridge go_home --state X    # otro group_state del SRDF
+```
+Lee el estado del SRDF que usa MoveIt, planifica evitando la escena y ejecuta a través del
+bridge (con todas sus validaciones). Si el robot ya está en el destino, no hace nada.
 
 ### Solo bridge (sin MoveIt)
 ```bash

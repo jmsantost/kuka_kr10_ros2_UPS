@@ -25,5 +25,6 @@ setup(
         'kuka_bridge = kuka_bridge.kuka_bridge_node:main',
         'kuka_vars = kuka_bridge.read_vars:main',
         'scene_publisher = kuka_bridge.scene_publisher:main',
+        'go_home = kuka_bridge.go_home:main',
     ]},
 )
